@@ -3,6 +3,7 @@
 Right now this is a proof of concept.  I'm trying to create a Hexagonal Grid (Flat Top) and allow the user to interact with a cell on the grid with the mouse.
 
 Later - My own personal Grid Mapping Program 
+
 Even Later - Some sort of strategic war game?  I guess that's possible...
 
 ## Currently:
