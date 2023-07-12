@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 
@@ -9,6 +12,8 @@ namespace GraphicsTest1
 {
     public partial class MainWindow : Window
     {
+        Dictionary<Point, HexCell> hexGrid = new Dictionary<Point, HexCell>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -22,28 +27,35 @@ namespace GraphicsTest1
             float width = 2 * size;
             float height = MathF.Sqrt(3) * size;
 
-            float horizontalOffset = 1.5f * size * 2;
+            float horizontalOffset = 1.5f * size;
             float verticalOffset = height;
 
             SolidColorBrush stroke = System.Windows.Media.Brushes.Gray;
             SolidColorBrush fill = System.Windows.Media.Brushes.Aqua;
 
             SolidColorBrush highLightStroke = System.Windows.Media.Brushes.Black;
-            SolidColorBrush highLightfill = System.Windows.Media.Brushes.LightBlue;
+            SolidColorBrush highLightfill = System.Windows.Media.Brushes.Transparent;
 
-            for (float x = 40; x <= 2325; x += horizontalOffset)
+            for (int i = 0; i <= 20; ++i)
             {
-                for (float y = 40; y <= 2325; y += verticalOffset)
+                for (int j = 0; j <= 50; ++j)
                 {
-                    DrawCross(x, y, 3);
-                    DrawHexagon(x, y, size, stroke, fill);
+                    string msg = i.ToString() + ":" + j.ToString();
+                    Debug.WriteLine(msg);
 
-                    DrawCross(x + (horizontalOffset / 2.0f), y + (verticalOffset / 2.0f), 4);
-                    DrawHexagon(x + (horizontalOffset / 2.0f), y + (verticalOffset / 2.0f), size, stroke, fill);
+                    float x = ((float)i * horizontalOffset * 2.0f) + 50;
+                    float y = ((float)j * verticalOffset / 2.0f) + 50;
+                    
+                    if(j % 2 == 0)
+                    {
+                        DrawHexagon(x, y, size, stroke, fill);
+                    }
+                    else
+                    {
+                        DrawHexagon(x + horizontalOffset, y, size, stroke, fill);
+                    }                    
                 }
             }
-
-            DrawHexagon(40, 40, size, highLightStroke, highLightfill);
         }
 
         private void DrawHexagon(float i, float j, float r, SolidColorBrush stroke, SolidColorBrush fill)
@@ -172,6 +184,7 @@ namespace GraphicsTest1
         private void MainCanvasMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             MouseState.Text = "Mouse Left Canvas";
+            MouseStateMovement.Text = "";
         }
 
         private void MainCanvasMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
