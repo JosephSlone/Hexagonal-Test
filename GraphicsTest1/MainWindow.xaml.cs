@@ -13,6 +13,11 @@ namespace GraphicsTest1
         {
             InitializeComponent();
 
+            DrawHexGrid();
+        }
+
+        private void DrawHexGrid()
+        {
             float size = 35;
             float width = 2 * size;
             float height = MathF.Sqrt(3) * size;
@@ -26,9 +31,9 @@ namespace GraphicsTest1
             SolidColorBrush highLightStroke = System.Windows.Media.Brushes.Black;
             SolidColorBrush highLightfill = System.Windows.Media.Brushes.LightBlue;
 
-            for (float x = 40 ; x <= 1750; x += horizontalOffset)
+            for (float x = 40; x <= 2325; x += horizontalOffset)
             {
-                for(float y = 40; y <= 1000; y += verticalOffset) 
+                for (float y = 40; y <= 2325; y += verticalOffset)
                 {
                     DrawCross(x, y, 3);
                     DrawHexagon(x, y, size, stroke, fill);
@@ -157,6 +162,23 @@ namespace GraphicsTest1
             newLine.Y2 = y+length;
 
             mainCanvas.Children.Add(newLine);
+        }
+
+        private void MainCanvasMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MouseState.Text = "Mouse Entered Canvas";
+        }
+
+        private void MainCanvasMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            MouseState.Text = "Mouse Left Canvas";
+        }
+
+        private void MainCanvasMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Point p = e.GetPosition(mainCanvas);
+            string pointText = p.ToString();
+            MouseStateMovement.Text = pointText;
         }
     }
 }
