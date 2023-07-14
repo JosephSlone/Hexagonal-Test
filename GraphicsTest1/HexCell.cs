@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Media;
 
 namespace GraphicsTest1
@@ -18,6 +13,7 @@ namespace GraphicsTest1
         public HexCell(Point center, Brush? backgroundColor, Brush? borderColor)
         {
             this.center = center;
+            
             this.backgroundColor = backgroundColor;
             this.borderColor = borderColor;
         }   

@@ -6,77 +6,107 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Numerics;
 
 
 namespace GraphicsTest1
 {
     public partial class MainWindow : Window
     {
-        Dictionary<Point, HexCell> hexGrid = new Dictionary<Point, HexCell>();
+        float canvasX = 2400;
+        float canvasY = 2400;
+
+        float hexSize = 35;
+
+        Dictionary<Vector3, HexCell> hexGrid = new Dictionary<Vector3, HexCell>();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            mainCanvas.Height = canvasY; mainCanvas.Width = canvasX;
+
 
             DrawHexGrid();
         }
 
         private void DrawHexGrid()
         {
-            float size = 35;
-            float width = 2 * size;
-            float height = MathF.Sqrt(3) * size;
+            
+            float width = 2 * hexSize;
+            float height = MathF.Sqrt(3) * hexSize;
 
-            float horizontalOffset = 1.5f * size;
+            float horizontalOffset = 1.5f * hexSize;
             float verticalOffset = height;
 
             SolidColorBrush stroke = System.Windows.Media.Brushes.Gray;
             SolidColorBrush fill = System.Windows.Media.Brushes.Aqua;
 
             SolidColorBrush highLightStroke = System.Windows.Media.Brushes.Black;
+            SolidColorBrush black = System.Windows.Media.Brushes.Black;
             SolidColorBrush highLightfill = System.Windows.Media.Brushes.Transparent;
 
-            for (int i = 0; i <= 20; ++i)
-            {
-                for (int j = 0; j <= 50; ++j)
-                {
-                    string msg = i.ToString() + ":" + j.ToString();
-                    Debug.WriteLine(msg);
+            Point point = ToCanvasCoords(ToGridCoordinates(new Point(0, 0)));
+            DrawHexagon(point, hexSize, stroke, fill);
+            DrawCross(point, 10, black);
 
-                    float x = ((float)i * horizontalOffset * 2.0f) + 50;
-                    float y = ((float)j * verticalOffset / 2.0f) + 50;
-                    
-                    if(j % 2 == 0)
-                    {
-                        DrawHexagon(x, y, size, stroke, fill);
-                    }
-                    else
-                    {
-                        DrawHexagon(x + horizontalOffset, y, size, stroke, fill);
-                    }                    
-                }
-            }
+            point = ToCanvasCoords(ToGridCoordinates(new Point(0, 1)));
+            DrawHexagon(point, hexSize, stroke, fill);
+            DrawCross(point, 10, black);
+
+
         }
 
-        private void DrawHexagon(float i, float j, float r, SolidColorBrush stroke, SolidColorBrush fill)
+        private Point ToCanvasCoords(Point point)
         {
-            Point center = new Point();
+            point.X += canvasX / 2.0f;
+            point.Y += canvasY / 2.0f;
 
-            center.X = i; center.Y = j;
+            return point;
+        }
 
+        private Point FromCanvasCoords(Point point)
+        {
+            point.X -= canvasX / 2.0f;
+            point.Y -= canvasY / 2.0f;
+
+            return point;
+        }
+
+
+
+        private Point ToGridCoordinates(Point point)
+        {
+            Point coords = new()
+            {
+                X = hexSize * point.X * 0.75f,
+                Y = MathF.Sqrt(3) / 2 * hexSize * (point.X / 2 + point.Y)
+            };
+
+            return coords;
+        }
+
+        private Point FromGridCoordinates(Point point)
+        {
+            return point;
+        }
+
+        private void DrawHexagon(Point center, float r, SolidColorBrush stroke, SolidColorBrush fill)
+        {
             Polygon polygon = new Polygon();
             polygon.Stroke = stroke;
             polygon.StrokeThickness = 2;
 
-            PointCollection points = new PointCollection();
-
-            points.Add( FlatHexCorner(center, r, 0));
-            points.Add(FlatHexCorner(center, r, 1));
-            points.Add(FlatHexCorner(center, r, 2));
-            points.Add(FlatHexCorner(center, r, 3));
-            points.Add(FlatHexCorner(center, r, 4));
-            points.Add(FlatHexCorner(center, r, 5));
-            points.Add(FlatHexCorner(center, r, 6));
+            PointCollection points = new PointCollection
+            {
+                FlatHexCorner(center, r, 0),
+                FlatHexCorner(center, r, 1),
+                FlatHexCorner(center, r, 2),
+                FlatHexCorner(center, r, 3),
+                FlatHexCorner(center, r, 4),
+                FlatHexCorner(center, r, 5),
+                FlatHexCorner(center, r, 6)
+            };
 
             polygon.Points = points;
             polygon.Fill = fill;
@@ -138,17 +168,22 @@ namespace GraphicsTest1
             circle.SetValue(Canvas.TopProperty, (double)(j - r));
         }
 
-        private void DrawCross(float x, float y, float r)
+        private void DrawCross(Point point, float r, SolidColorBrush? brush = null)
         {
-            DrawHorizontalLine(x-r, y, r*2);
-            DrawVerticalLine(x, y-r, r*2);
+            if (brush is null)
+            {
+                brush = System.Windows.Media.Brushes.Black;
+            }
+
+            DrawHorizontalLine(point.X-r, point.Y, r*2, brush);
+            DrawVerticalLine(point.X, point.Y-r, r*2, brush);
         }
 
-        private void DrawHorizontalLine(float x, float y, float length)
+        private void DrawHorizontalLine(double x, double y, float length, SolidColorBrush brush)
         {
             var newLine = new Line
             {
-                Stroke = System.Windows.Media.Brushes.Black,
+                Stroke = brush,
                 StrokeThickness = 1,
             };
 
@@ -160,11 +195,11 @@ namespace GraphicsTest1
             mainCanvas.Children.Add(newLine);
         }
 
-        private void DrawVerticalLine(float x, float y, float length)
+        private void DrawVerticalLine(double x, double y, float length, SolidColorBrush brush)
         {
             var newLine = new Line
             {
-                Stroke = System.Windows.Media.Brushes.Black,
+                Stroke = brush,
                 StrokeThickness = 1,
             };
 
@@ -189,7 +224,7 @@ namespace GraphicsTest1
 
         private void MainCanvasMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Point p = e.GetPosition(mainCanvas);
+            Point p = FromCanvasCoords(e.GetPosition(mainCanvas));
             string pointText = p.ToString();
             MouseStateMovement.Text = pointText;
         }
