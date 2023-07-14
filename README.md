@@ -6,6 +6,12 @@ Later - My own personal Grid Mapping Program
 
 Even Later - Some sort of strategic war game?  I guess that's possible...
 
+# Sources
+
+https://www.redblobgames.com/grids/hexagons/
+
+http://www.gamelogic.co.za/downloads/HexMath2.pdf
+
 ## Currently:
 - Display a grid
 - Capture mouse entering and leaving the grid canvas
